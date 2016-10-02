@@ -6,46 +6,136 @@
 "use strict";
 
 const BABYLON = require("babylonjs");
+const HandJS = require("./hand");
+const Status = require("./status");
+const Scene = require("./scene");
+const Character = require("./character");
+const Input = require('./input')
 
-var canvas = document.getElementById('screen');
+//garbage
+let sceneCharger = false;
+let PlayerCharger = false;
+let cameraArcRotative = [];
+let meshOctree = null;
 
-var engine = new BABYLON.Engine(canvas, true);
 
-var createScene = function() {
-    // create a basic BJS Scene object
-    var scene = new BABYLON.Scene(engine);
 
-    // create a FreeCamera, and set its position to (x:0, y:5, z:-10)
-    var camera = new BABYLON.FreeCamera('camera1', new BABYLON.Vector3(0, 5,-10), scene);
+//main
+(async ()=>{
+    
+    const canvas = document.getElementById('screen');
+    const engine = new BABYLON.Engine(canvas, true);
+    engine.displayLoadingUI();
+    const scene = await Scene.createScene(canvas, engine, cameraArcRotative);
+    const playerMap = Status.playerMap;
+    const playerName = "zcy";
+    playerMap.set(playerName,Status.currentPlayer);
+    
+    const currentPlayer = Status.currentPlayer;
+    meshOctree = await Character.createCharacter(scene,currentPlayer);
+    cameraArcRotative[0].alpha = -parseFloat(currentPlayer.meshPlayer.rotation.y) + 4.69;
 
-    // target the camera to scene origin
-    camera.setTarget(BABYLON.Vector3.Zero());
+    //setTimeout(async ()=>{
+        const secondPlayer = Status.secondPlayer;
+        playerMap.set("name",secondPlayer);
+        meshOctree = meshOctree.concat(await Character.createCharacter(scene,secondPlayer));
+    //},1000);
 
-    // attach the camera to the canvas
-    camera.attachControl(canvas, false);
 
-    // create a basic light, aiming 0,1,0 - meaning, to the sky
-    var light = new BABYLON.HemisphericLight('light1', new BABYLON.Vector3(0,1,0), scene);
 
-    // create a built-in "sphere" shape; its constructor takes 5 params: name, width, depth, subdivisions, scene
-    var sphere = BABYLON.Mesh.CreateSphere('sphere1', 16, 2, scene);
+    function animatActor() {
+        for(let player of playerMap.values()){
+            //console.log(player);
+            const meshPlayer = player.meshPlayer;
+            const playAnnimation = player.playAnnimation;
+            const VitessePerso = player.speed;
+            if(playAnnimation === false && (player.front === 1 || player.back === 1)) {
+                const totalFrame = player.skeletonsPlayer._scene._activeSkeletons.data.length;
+                const start = 0;
+                const end = 100;
+                const VitesseAnim = parseFloat(100 / 100);
+                scene.beginAnimation(player.skeletonsPlayer, (100*start)/totalFrame, (100*end)/totalFrame, true, VitesseAnim);
+                player.meshPlayer.position = new BABYLON.Vector3(parseFloat(meshPlayer.position.x), parseFloat(meshPlayer.position.y), parseFloat(meshPlayer.position.z));
+               // player.namePlane.position = new BABYLON.Vector3(parseFloat(meshPlayer.position.x), parseFloat(meshPlayer.position.y + 5), parseFloat(meshPlayer.position.z));
+                player.playAnnimation = true;
+            }
+            if (player.front === 1){	// En avant
+                const forward = new BABYLON.Vector3(parseFloat(Math.sin(parseFloat(meshPlayer.rotation.y))) / VitessePerso, 0.5, parseFloat(Math.cos(parseFloat(meshPlayer.rotation.y))) / VitessePerso).negate();
+                meshPlayer.moveWithCollisions(forward);
+                //player.namePlane.moveWithCollisions(forward);
+            }
+            else if (player.back === 1) { // En arriere
+                const backwards = new BABYLON.Vector3(parseFloat(Math.sin(parseFloat(meshPlayer.rotation.y))) / VitessePerso, -0.5, parseFloat(Math.cos(parseFloat(meshPlayer.rotation.y))) / VitessePerso);
+                meshPlayer.moveWithCollisions(backwards);
+                //player.namePlane.moveWithCollisions(backwards);
+            }
+        }
+    }
+    function CameraFollowActor()
+    {
+        const meshPlayer = currentPlayer.meshPlayer;
+        meshPlayer.rotation.y = -4.69 - cameraArcRotative[0].alpha;
+        cameraArcRotative[0].target.x = parseFloat(meshPlayer.position.x);
+        cameraArcRotative[0].target.z = parseFloat(meshPlayer.position.z);
+    }
 
-    // move the sphere upward 1/2 of its height
-    sphere.position.y = 1;
+    scene.registerBeforeRender(function(){
+        if(scene.isReady()) {
+            if(sceneCharger === false) {
+                engine.hideLoadingUI();
+                sceneCharger = true;
+            }
+            animatActor();
+        }
+    });
 
-    // create a built-in "ground" shape; its constructor takes the same 5 params as the sphere's one
-    var ground = BABYLON.Mesh.CreateGround('ground1', 6, 6, 2, scene);
+    
 
-    // return the created scene
-    return scene;
-};
+    engine.runRenderLoop(function () {
+        //console.log(scene);
+        scene.render();
+        if(scene.isReady()){
 
-var scene = createScene();
+            CameraFollowActor();
 
-engine.runRenderLoop(function() {
-    scene.render();
-});
+            if(PlayerCharger === false) {
+                console.log("debug");
+                //scene.stopAnimation(skeletonsPlayer[0]);
+                PlayerCharger = true;
+                for(let player of playerMap.values()){
+                    scene.stopAnimation(player.skeletonsPlayer);
+                }
 
-window.addEventListener('resize', function() {
-    engine.resize();
-});
+                const octree = scene.createOrUpdateSelectionOctree();
+                for(var i = 0; i < meshOctree.length; i++) {
+                    octree.dynamicContent.push(meshOctree[i]);
+                }
+            }
+        }
+    });
+    Input.registerInputCallback(scene);
+    window.addEventListener("resize", function () { engine.resize();});
+
+    // var planeMaterial,plan,planeTexture,textureContext,size,textSize;
+    // plan = BABYLON.Mesh.CreateBox("Etiquetes", 1.0, scene);
+    // plan.scaling.y = 0.8; plan.scaling.x = 3;
+    // plan.position = new BABYLON.Vector3(0, 2.75, 0);
+    // planeMaterial = new BABYLON.StandardMaterial("plane material", scene);
+    // planeTexture = new BABYLON.DynamicTexture("dynamic texture", 128, scene, true);
+    // planeTexture.hasAlpha = true; textureContext = planeTexture.getContext();
+    // textureContext.font = "bold 40px Calibri";size = planeTexture.getSize();
+    // textureContext.save();textureContext.fillStyle = "red";
+    // textureContext.fillRect(0, 0, size.width, size.height);
+    // textSize = textureContext.measureText("hissssssss");
+    // textureContext.fillStyle = "white";
+    // textureContext.fillText("hssssssssssssi", (size.width - textSize.width) / 2, (size.height + 20) / 2);
+    // textureContext.restore();planeTexture.update();
+    // planeMaterial.diffuseTexture = planeTexture;plan.material = planeMaterial;
+    // plan.parent = currentPlayer.meshPlayer;
+
+})();
+
+
+
+
+

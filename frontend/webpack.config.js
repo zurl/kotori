@@ -1,12 +1,12 @@
-var webpack = require('webpack');
-var path = require("path");
+const webpack = require('webpack');
+const path = require("path");
 module.exports = {
     entry: {
         app: ["./src/main.js"]
     },
     output: {
         path: path.resolve(__dirname, "build"),
-        publicPath: "/assets/",
+        publicPath: "/assets/js/",
         filename: "bundle.js"
     },
     devtool:"cheap-module-eval-source-map",
@@ -14,11 +14,26 @@ module.exports = {
     plugins: [
         new webpack.optimize.UglifyJsPlugin({
             compress: {
-                warnings: false,
+                warnings: false
             },
             output: {
-                comments: false,
-            },
-        }),
-    ]
+                comments: false
+            }
+        })
+    ],
+    module: {
+        loaders: [
+            {
+                test: /\.js$/,
+                exclude: /node_modules/,
+                loader: 'babel-loader',
+                query: {
+                    presets: ['stage-3']
+                }
+            }
+        ]
+    },
+    babel: {
+        presets: ['stage-3']
+    }
 };
