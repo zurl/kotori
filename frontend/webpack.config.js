@@ -5,8 +5,8 @@ module.exports = {
         app: ["./src/main.js"]
     },
     output: {
-        path: path.resolve(__dirname, "build"),
-        publicPath: "/assets/js/",
+        //path: path.resolve(__dirname, "build"),
+        path: "./assets/js/",
         filename: "bundle.js"
     },
     devtool:"cheap-module-eval-source-map",

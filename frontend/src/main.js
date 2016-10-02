@@ -54,7 +54,7 @@ let meshOctree = null;
                 const start = 0;
                 const end = 100;
                 const VitesseAnim = parseFloat(100 / 100);
-                scene.beginAnimation(player.skeletonsPlayer, (100*start)/totalFrame, (100*end)/totalFrame, true, VitesseAnim);
+                //scene.beginAnimation(player.skeletonsPlayer, (100*start)/totalFrame, (100*end)/totalFrame, true, VitesseAnim);
                 player.meshPlayer.position = new BABYLON.Vector3(parseFloat(meshPlayer.position.x), parseFloat(meshPlayer.position.y), parseFloat(meshPlayer.position.z));
                // player.namePlane.position = new BABYLON.Vector3(parseFloat(meshPlayer.position.x), parseFloat(meshPlayer.position.y + 5), parseFloat(meshPlayer.position.z));
                 player.playAnnimation = true;

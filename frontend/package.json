@@ -8,7 +8,7 @@
     "dev": "webpack-dev-server"
   },
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "babylonjs": "^2.4.1"
   },

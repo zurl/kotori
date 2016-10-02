@@ -15,21 +15,28 @@ exports.createCharacter = (scene, player) => new Promise((resolved,rejected)=>{
 
 
 
-        BABYLON.SceneLoader.ImportMesh("", "./assets/character/", "him.babylon", scene,
+        BABYLON.SceneLoader.ImportMesh("", "./assets/character_4/", "him.babylon", scene,
         (newMeshes, particleSystems, skeletons) => {
                 try{
-                const meshPlayer = newMeshes[0];
+                        //console.log(newMeshes);
+                const meshPlayer = newMeshes[3];
                 player.meshPlayer = meshPlayer;
-                meshPlayer.scaling = new BABYLON.Vector3(0.05, 0.05, 0.05);
+                        for(let x of newMeshes){
+                                if( x != meshPlayer)x.parent = meshPlayer;
+                                //x.scaling = new BABYLON.Vector3(0.05, 0.05, 0.05);
+                        }
+                meshPlayer.scaling = new BABYLON.Vector3(0.03, 0.03, 0.03);
                 meshPlayer.position = new BABYLON.Vector3(-5.168, 1.392, -7.463);
                 meshPlayer.rotation = new BABYLON.Vector3(0, 3.9, 0);
-                player.skeletonsPlayer = skeletons[0];
+                player.skeletonsPlayer = skeletons[1];
                 var totalFrame = skeletons[0]._scene._activeSkeletons.data.length;
                 var start = 0;
-                var end = 100;
+                var end = 100; 
                 var vitesse = 100 / 100;
-                scene.beginAnimation(skeletons[0], 100 * start / totalFrame, 100 * end / totalFrame, true, vitesse);
-
+                //scene.beginAnimation(skeletons[0],
+                        // 100 * start / totalFrame, 100 * end / totalFrame, true,
+                        // vitesse);
+                        for(let x of skeletons)scene.stopAnimation(x);
 
 
 
@@ -37,7 +44,7 @@ exports.createCharacter = (scene, player) => new Promise((resolved,rejected)=>{
                         player.namePlane = BABYLON.Mesh.CreatePlane("Mur", 1, scene);
                         player.namePlane.wireframe = true;
                         player.namePlane.scaling = new BABYLON.Vector3(50, 25, 1);
-                        player.namePlane.position = new BABYLON.Vector3(0, 80, 0);
+                        player.namePlane.position = new BABYLON.Vector3(0, 180, 0);
                         player.namePlane.rotation = new BABYLON.Vector3(0, 3.14, 0);
                         //player.namePlane.billboardMode = BABYLON.AbstractMesh.BILLBOARDMODE_ALL;
                          var backgroundTexture = new BABYLON.DynamicTexture("dynamic texture", 512, scene, true);
