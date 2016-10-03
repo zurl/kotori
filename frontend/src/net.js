@@ -7,7 +7,7 @@
 
 const BABYLON = require("babylonjs");
 const io = require("socket.io-client");
-const socket = io();
+const socket = io("http://www.zhangcy.cn:4000");
 const $ = require('jquery');
 const Status = require('./status');
 
