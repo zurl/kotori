@@ -10,6 +10,7 @@ const Status = require("./status");
 exports.registerInputCallback = (scene) =>{
     console.log('reg');
     const onKeyDown = (event)=>{
+        if(Status.settings.on_meg)return;
         const keyCode = event.keyCode;
         const ch = String.fromCharCode(keyCode);
         switch (keyCode) {
@@ -29,6 +30,7 @@ exports.registerInputCallback = (scene) =>{
 
 
     const onKeyUp = (event)=>{
+        if(Status.settings.on_meg)return;
         const keyCode = event.keyCode;
         const ch = String.fromCharCode(keyCode);
         switch (keyCode) {

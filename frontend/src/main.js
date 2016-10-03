@@ -20,8 +20,34 @@ let PlayerCharger = false;
 let cameraArcRotative = [];
 let meshOctree = [];
 let netCache = {x:0,y:0,z:0,ry:0};
+let msg_status = true;
 
-$('#rep-name').hide();
+//$('#rep-name').hide();
+//$('#login-container').hide();
+//$('#screen-container').show();
+
+$('#msg-input').focus(function(){
+    console.log('fo');
+    Status.settings.on_meg = true;
+}).blur(function(){
+    console.log('bu');
+    Status.settings.on_meg = false;
+}).keydown(function(event){
+    if(event.keyCode == 13){
+        $('#msg-form').submit();
+    }
+});
+
+$('#msg-head').click(function(){
+    if(msg_status){
+        msg_status = false;
+        $('.msg-body').slideUp(500);
+    }else{
+        msg_status = true;
+        $('.msg-body').slideDown(500);
+    }
+});
+
 
 //main
 (async ()=>{

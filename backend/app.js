@@ -27,6 +27,7 @@ io.on('connection', function(socket){
         }else{
             name = msg;
             socket.emit('Game::Enter@Res','ok');
+            socket.emit('Chat::SystemMsg@Res',"Welcome to join our game!");
             console.log(`new player:${name}`);
             playerMap.set(msg,createPlayer());
             playerRef = playerMap.get(msg);
@@ -41,6 +42,8 @@ io.on('connection', function(socket){
     });
     socket.on('Game::Init@Req', function(msg){
         for(let player of playerMap){
+            console.log(name);
+            console.log(player);
             if(player[0] != name){
                 socket.emit('Game::Init@Res',JSON.stringify({
                     name : player[0],
@@ -66,6 +69,11 @@ io.on('connection', function(socket){
             z : playerRef.z,
             ry : playerRef.ry
         }));
+    });
+    socket.on('Chat::SendMsg@Req', function(msg){
+        console.log(`message from ${name} : ${msg}`);
+        socket.emit('Chat::SendMsg@Res','ok');
+        socket.broadcast.emit('Chat::SendMsg@BC',JSON.stringify({name : name, msg : msg}));
     });
     socket.on('disconnect', function(){
         if(name != null){

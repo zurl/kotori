@@ -6,18 +6,19 @@
     <style>
         html, body {
             overflow: hidden;
-            width   : 100%;
-            height  : 100%;
-            margin  : 0;
-            padding : 0;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
             background-color: #eee;
         }
 
         #screen {
-            width   : 100%;
-            height  : 100%;
+            width: 100%;
+            height: 100%;
             touch-action: none;
         }
+
         #login-container {
             padding-top: 40px;
             padding-bottom: 40px;
@@ -28,6 +29,7 @@
             padding: 15px;
             margin: 0 auto;
         }
+
         .form-signin .form-signin-heading,
         .form-signin .form-control {
             position: relative;
@@ -38,43 +40,83 @@
             padding: 10px;
             font-size: 20px;
         }
+
         .form-signin .form-control:focus {
             z-index: 2;
         }
+
         .form-signin input[type="text"] {
             margin-bottom: -1px;
             border-bottom-right-radius: 0;
             border-bottom-left-radius: 0;
         }
 
+        .panel-con {
+            width: 100%;
+            height: 100%;
+        }
+
+        .panel-style {
+            width: 100%;
+            height: 100%;
+        }
+        .no-bor {
+            position: absolute; left: 0px;top:40px;
+
+        }
+
     </style>
 </head>
 <body>
 
-    <div id="login-container" class="container">
-        <form class="form-signin" role="form" id="login-form">
-            <h1 class="form-signin-heading">Choose a fabulous name</h1>
-            <input type="text" id="name-input" class="form-control" placeholder="Your name" required autofocus>
-            <br>
-            <button class="btn btn-lg btn-primary btn-block" type="submit">Enter the Game</button>
-        </form>
-        <div id="rep-name" class="alert alert-danger" role="alert" style="display:none">Oh...The name you selected has been used, please choose a new one.</div>
-    </div> <!-- /container -->
-
-    <div class="container" id="screen-container" style="display: none">
-        <div class="row">
-            <div class="col-xs-12 col-md-8">
-
-            </div>
-            <div class="col-xs-6 col-md-4"><canvas id="screen"> </canvas></div>
-        </div>
+<div id="login-container" class="container">
+    <form class="form-signin" role="form" id="login-form">
+        <h1 class="form-signin-heading">Choose a fabulous name</h1>
+        <input type="text" id="name-input" class="form-control" placeholder="Your name" required autofocus>
+        <br>
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Enter the Game</button>
+    </form>
+    <div id="rep-name" class="alert alert-danger" role="alert" style="display:none">Oh...The name you selected has been
+        used, please choose a new one.
     </div>
-    <link rel="stylesheet" href="assets/css/bootstrap.min.old.css">
-    <!--link rel="stylesheet" href="assets/css/bootstrap.min.old.css"-->
-    <script src="assets/js/jquery.min.js"></script>
-    <script src="assets/js/bootstrap.min.js"></script>
+</div> <!-- /container -->
 
-    <script src="assets/js/bundle.js"></script>
-    <script src="http://localhost:8080/webpack-dev-server.js"></script>
+<!--div class="container-fluid" id="screen-container" style="display: none">
+    <div class="row">
+        <div class="col-xs-14 col-md-9 no-bor">
+        </div>
+        <div class="col-xs-4 col-md-3 no-bor"-->
+            <canvas id="screen"></canvas>
+<div class="no-bor" style="display: none">
+            <div class="panel panel-default" >
+                <div class="panel-heading" id="msg-head">
+                    <h4 class="panel-title">Alien Information Exchange Terminal</h4>
+                    <div>Online Players :
+                        <span id="player-number"></span>
+                    </div>
+                </div>
+                <div id="msg-body" class="panel-body panel-style pre-scrollable msg-body">
+                </div>
+                <div class="panel-footer msg-body">
+                    <form role="form" id="msg-form">
+                        <input type="text" id="msg-input" class="form-control" placeholder="Your words" required
+                           >
+                        <br>
+                        <button class="btn btn-sm btn-primary btn-block" type="submit">Send Message</button>
+
+                    </form>
+                </div>
+            </div>
+</div>
+        <!--/div>
+    </div>
+</div-->
+<link rel="stylesheet" href="assets/css/bootstrap.min.old.css">
+<!--link rel="stylesheet" href="assets/css/bootstrap.min.old.css"-->
+<script src="assets/js/jquery.min.js"></script>
+<script src="assets/js/bootstrap.min.js"></script>
+
+<script src="assets/js/bundle.js"></script>
+<script src="http://localhost:8080/webpack-dev-server.js"></script>
 </body>
 </html>

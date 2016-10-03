@@ -5,9 +5,31 @@
  */
 "use strict";
 
+const $ = require('jquery');
+
 exports.playerMap = new Map();
 
-exports.createPlayer = ()=>{return {
+exports.settings = {
+    on_meg : false,
+    __player_number : 0,
+    get player_number(){
+        return this.__player_number;
+    },
+    set player_number(a){
+        $('#player-number').text(a);
+        this.__player_number = a;
+    }
+};
+
+function getRandomColor(){
+    let colors = ["success","info","warning","danger"];
+    return colors[parseInt(Math.random() * 10000) % 4];
+}
+
+exports.createPlayer = ()=>{
+    exports.settings.player_number = exports.settings.player_number + 1;
+    return {
+        color: getRandomColor(),
     name : "",
     playAnimation : false,
     meshs : null,
@@ -25,4 +47,3 @@ exports.createPlayer = ()=>{return {
 
 exports.currentPlayer = exports.createPlayer();
 
-exports.settings = {};

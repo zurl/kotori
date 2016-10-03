@@ -11,6 +11,33 @@ const socket = io("http://127.0.0.1:3000/");
 const $ = require('jquery');
 const Status = require('./status');
 
+let tmp_str = "";
+socket.on('Chat::SystemMsg@Res',function (msg) {
+    console.log('get res');
+    $("#msg-body").append(`
+         <div class="bg-danger" role="alert">
+             <p>System: ${(new Date()).toLocaleString()}</p>
+             <p>msg</p>
+         </div>
+        `);
+});
+socket.on('Chat::SendMsg@Res',function (msg) {
+    console.log('get res');
+    $("#msg-body").append(`
+         <div class="bg-${Status.currentPlayer.color}" role="alert">
+             <p>${Status.currentPlayer.name}: ${(new Date()).toLocaleString()}</p>
+             <p>${tmp_str}</p>
+         </div>
+        `);
+});
+$('#msg-form').submit(function(){
+    console.log('sub');
+    tmp_str = $('#msg-input').val();
+    socket.emit('Chat::SendMsg@Req', tmp_str);
+    $('#msg-input').val('');
+    return false;
+});
+
 exports.linkServer = (createPlayerCallback)=>new Promise((resolved,rejected)=>{
     const form = $('#login-form');
     form.submit(()=>{
@@ -23,9 +50,10 @@ exports.linkServer = (createPlayerCallback)=>new Promise((resolved,rejected)=>{
                 $("#login-container").hide();
                 socket.emit('Game::Init@Req','');
                 $('#screen-container').show();
+                $('.no-bor').show();
                 resolved();
                 socket.on('Game::Init@Res', async function(msg) {
-                    console.log("init");
+                    console.log("init" + msg);
                     const obj = JSON.parse(msg);
                     const meshPlayer = await createPlayerCallback(obj.name);
                     meshPlayer.position = new BABYLON.Vector3(
@@ -50,7 +78,19 @@ exports.linkServer = (createPlayerCallback)=>new Promise((resolved,rejected)=>{
                         parseFloat(obj.ry),
                         parseFloat(meshPlayer.rotation.z));
                 });
+                socket.on('Chat::SendMsg@BC',function(msg){
+                    console.log('get bc');
+                    const obj = JSON.parse(msg);
+                    const playerRef = Status.playerMap.get(obj.name);
+                    $("#msg-body").append(`
+                     <div class="bg-${playerRef.color}" role="alert">
+                         <p>${playerRef.name}: ${(new Date()).toLocaleString()}</p>
+                         <p>${obj.msg}</p>
+                     </div>
+                    `);
+                });
                 socket.on('Game::Disconnect@BC',function(msg){
+                    Status.settings.player_number = Status.settings.player_number - 1;
                     const playerRef = Status.playerMap.get(msg);
                     for(let x of playerRef.meshs){
                         x.dispose();
