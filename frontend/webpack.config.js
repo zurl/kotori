@@ -4,9 +4,13 @@ module.exports = {
     entry: {
         app: ["./src/main.js"]
     },
+    // output: {
+    //     path: path.resolve(__dirname, "build"),
+    //     publicPath: "/assets/js/",
+    //     filename: "bundle.js"
+    // },
     output: {
-        path: path.resolve(__dirname, "build"),
-        publicPath: "/assets/js/",
+        path: "./assets/js/",
         filename: "bundle.js"
     },
     devtool:"cheap-module-eval-source-map",

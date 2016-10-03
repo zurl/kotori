@@ -8,6 +8,9 @@
 const app = require('koa')();
 const server = require('http').createServer(app.callback());
 const io = require('socket.io')(server);
+const serve =require('koa-static');
+
+app.use(serve('../frontend'));
 
 const playerMap = new Map();
 

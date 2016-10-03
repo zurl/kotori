@@ -7,7 +7,7 @@
 
 const BABYLON = require("babylonjs");
 const io = require("socket.io-client");
-const socket = io("http://127.0.0.1:3000/");
+const socket = io();
 const $ = require('jquery');
 const Status = require('./status');
 
@@ -17,7 +17,7 @@ socket.on('Chat::SystemMsg@Res',function (msg) {
     $("#msg-body").append(`
          <div class="bg-danger" role="alert">
              <p>System: ${(new Date()).toLocaleString()}</p>
-             <p>msg</p>
+             <p>${msg}</p>
          </div>
         `);
 });
