@@ -10,7 +10,8 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "babylonjs": "^2.4.1"
+    "babylonjs": "^2.4.1",
+    "socket.io-client": "^1.4.8"
   },
   "devDependencies": {
     "babel": "^6.5.2",

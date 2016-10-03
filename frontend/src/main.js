@@ -10,7 +10,8 @@ const HandJS = require("./hand");
 const Status = require("./status");
 const Scene = require("./scene");
 const Character = require("./character");
-const Input = require('./input')
+const Input = require('./input');
+const Net = require('./net');
 
 //garbage
 let sceneCharger = false;
@@ -89,8 +90,8 @@ let meshOctree = null;
         }
     });
 
+    await Net.linkServer();
     
-
     engine.runRenderLoop(function () {
         //console.log(scene);
         scene.render();
@@ -115,23 +116,6 @@ let meshOctree = null;
     });
     Input.registerInputCallback(scene);
     window.addEventListener("resize", function () { engine.resize();});
-
-    // var planeMaterial,plan,planeTexture,textureContext,size,textSize;
-    // plan = BABYLON.Mesh.CreateBox("Etiquetes", 1.0, scene);
-    // plan.scaling.y = 0.8; plan.scaling.x = 3;
-    // plan.position = new BABYLON.Vector3(0, 2.75, 0);
-    // planeMaterial = new BABYLON.StandardMaterial("plane material", scene);
-    // planeTexture = new BABYLON.DynamicTexture("dynamic texture", 128, scene, true);
-    // planeTexture.hasAlpha = true; textureContext = planeTexture.getContext();
-    // textureContext.font = "bold 40px Calibri";size = planeTexture.getSize();
-    // textureContext.save();textureContext.fillStyle = "red";
-    // textureContext.fillRect(0, 0, size.width, size.height);
-    // textSize = textureContext.measureText("hissssssss");
-    // textureContext.fillStyle = "white";
-    // textureContext.fillText("hssssssssssssi", (size.width - textSize.width) / 2, (size.height + 20) / 2);
-    // textureContext.restore();planeTexture.update();
-    // planeMaterial.diffuseTexture = planeTexture;plan.material = planeMaterial;
-    // plan.parent = currentPlayer.meshPlayer;
 
 })();
 
