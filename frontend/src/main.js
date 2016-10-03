@@ -12,40 +12,50 @@ const Scene = require("./scene");
 const Character = require("./character");
 const Input = require('./input');
 const Net = require('./net');
+const $ = require('jquery');
 
 //garbage
 let sceneCharger = false;
 let PlayerCharger = false;
 let cameraArcRotative = [];
-let meshOctree = null;
+let meshOctree = [];
+let netCache = {x:0,y:0,z:0,ry:0};
 
-
+$('#rep-name').hide();
 
 //main
 (async ()=>{
-    
+
+    await Net.linkServer(async(name)=>{
+        PlayerCharger = false;
+        const player = Status.createPlayer();
+        player.name = name;
+        console.log('set!');
+        playerMap.set(name, player);
+        meshOctree = meshOctree.concat(await Character.createCharacter(scene, player));
+        return player.meshPlayer;
+    });
+
     const canvas = document.getElementById('screen');
     const engine = new BABYLON.Engine(canvas, true);
     engine.displayLoadingUI();
     const scene = await Scene.createScene(canvas, engine, cameraArcRotative);
     const playerMap = Status.playerMap;
-    const playerName = "zcy";
-    playerMap.set(playerName,Status.currentPlayer);
     
     const currentPlayer = Status.currentPlayer;
     meshOctree = await Character.createCharacter(scene,currentPlayer);
     cameraArcRotative[0].alpha = -parseFloat(currentPlayer.meshPlayer.rotation.y) + 4.69;
 
+
     //setTimeout(async ()=>{
-        const secondPlayer = Status.secondPlayer;
-        playerMap.set("name",secondPlayer);
-        meshOctree = meshOctree.concat(await Character.createCharacter(scene,secondPlayer));
+
     //},1000);
 
 
 
     function animatActor() {
         for(let player of playerMap.values()){
+            //console.log(player);
             //console.log(player);
             const meshPlayer = player.meshPlayer;
             const playAnnimation = player.playAnnimation;
@@ -72,12 +82,25 @@ let meshOctree = null;
             }
         }
     }
-    function CameraFollowActor()
-    {
+    function iseq(x,y){
+        return Math.abs(x-y) <= 0.001;
+    }
+
+    function CameraFollowActor() {
         const meshPlayer = currentPlayer.meshPlayer;
         meshPlayer.rotation.y = -4.69 - cameraArcRotative[0].alpha;
         cameraArcRotative[0].target.x = parseFloat(meshPlayer.position.x);
         cameraArcRotative[0].target.z = parseFloat(meshPlayer.position.z);
+        if(!iseq(meshPlayer.position.x ,netCache.x)
+            || !iseq(meshPlayer.position.y,netCache.y)
+            || !iseq(meshPlayer.position.z,netCache.z)
+            || !iseq(meshPlayer.rotation.y,netCache.ry)){
+            netCache.x = meshPlayer.position.x;
+            netCache.y = meshPlayer.position.y;
+            netCache.z = meshPlayer.position.z;
+            netCache.ry = meshPlayer.rotation.y;
+            Net.move(netCache);
+        }
     }
 
     scene.registerBeforeRender(function(){
@@ -89,8 +112,6 @@ let meshOctree = null;
             animatActor();
         }
     });
-
-    await Net.linkServer();
     
     engine.runRenderLoop(function () {
         //console.log(scene);
@@ -111,6 +132,7 @@ let meshOctree = null;
                 for(var i = 0; i < meshOctree.length; i++) {
                     octree.dynamicContent.push(meshOctree[i]);
                 }
+                meshOctree = [];
             }
         }
     });

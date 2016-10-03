@@ -14,6 +14,8 @@ exports.createCharacter = (scene, player) => new Promise((resolved, rejected)=> 
     BABYLON.SceneLoader.ImportMesh("", "./assets/character_4/", "him.babylon", scene,
         (newMeshes, particleSystems, skeletons) => {
             try {
+                player.meshs = newMeshes;
+                player.skeletons = skeletons;
                 const meshPlayer = newMeshes[3];
                 player.meshPlayer = meshPlayer;
                 for (let x of newMeshes) {
@@ -45,7 +47,7 @@ exports.createCharacter = (scene, player) => new Promise((resolved, rejected)=> 
                 player.namePlane.material.emissiveColor = new BABYLON.Color3(1, 1, 1);
                 var context2D = backgroundTexture.getContext();
                 context2D.clearRect(0, 0, 512, 512);
-                backgroundTexture.drawText("叶靖琛", 0, 140, "bold 140px verdana", "black", "transparent");
+                backgroundTexture.drawText(player.name, 0, 140, "bold 140px verdana", "black", "transparent");
                 
                 meshPlayer.checkCollisions = true;
                 meshPlayer.ellipsoid = new BABYLON.Vector3(0.5, 1, 0.5);
