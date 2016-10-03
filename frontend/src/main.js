@@ -26,6 +26,9 @@ let msg_status = true;
 //$('#login-container').hide();
 //$('#screen-container').show();
 
+$('#waiting-container').hide();
+$('#login-container').show();
+
 $('#msg-input').focus(function(){
     console.log('fo');
     Status.settings.on_meg = true;
