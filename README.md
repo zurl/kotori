@@ -2,10 +2,17 @@
 
 A simple MMORPG by zcy
 
-frontend :
-npm install
-webpack -p
+Temporary test server : http://www.zhangcy.cn:4000
 
-backend :
-npm install
+frontend :  
+
+```bash
+npm install  
+webpack -p  
+```
+
+backend :  
+```bash
+npm install  
 node index.js
+```
