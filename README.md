@@ -2,7 +2,7 @@
 
 A simple MMORPG by zcy
 
-Temporary test server : http://www.zhangcy.cn:4000
+Temporary test server : http://kotori.zhangcy.cn/
 
 frontend :  
 
